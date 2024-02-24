@@ -3,21 +3,32 @@ from typing import List, Dict
 
 def get_response(user_input : str) -> str:
     lowered: str = user_input.lower()
-
+    if lowered[0] != "!":
+        return None
+    lowered = lowered[1:]
     if lowered == '':
         return 'Well, you\'re silent...'
-    elif 'hello' in lowered:
+    elif lowered.startswith('hello'):
         return 'Hello there!'
-    elif 'how are you' in lowered:
+    elif lowered.startswith('good?'):
         return 'Good, thanks!'
-    elif 'bye' in lowered:
+    elif lowered.startswith('bye'):
         return 'See you!'
-    elif 'roll dice' in lowered:
+    elif lowered.startswith('dice'):
         return f'You rolled: {randint(1,6)}'
-    elif 'event' in lowered:
+    elif lowered.startswith('events'):
         data = get_data()
-        events = [event for event_list in data.values() for event in event_list]
-        return events
+        events = []
+        for event_list in data.values():
+            for event in event_list:
+                events.append(event)
+        formatted_events = []
+        for i in range(len(events)):
+            one_event = f"Event{i+1}: {events[i]['name']} \n Location: {events[i]['location']} \n Time: {events[i]['time']} \n URL: {events[i]['URL']}\n"
+            formatted_events.append(one_event)
+        return '\n'.join(formatted_events)
+    elif lowered.startswith('help'):
+        return """!hello: Say hello to users \n good?: My feeling now \n !bye: Say goodbye to Bot \n !dice: How lucky are you today \n !events: List of food events today \n !help: Showing this lists"""
     else:
         return choice(['I do not understand...',
                        'What are you talking about?',

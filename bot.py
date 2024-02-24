@@ -40,6 +40,8 @@ async def send_message(message: Message, user_message: str) -> None:
     
     try:
         response : str = get_response(user_message)
+        if response is None:
+            return
         await message.author.send(response) if is_private else await message.channel.send(response)
         # if private is said to true, send the message privately
         # otherwise send to the current channel
