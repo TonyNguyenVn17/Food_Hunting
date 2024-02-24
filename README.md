@@ -18,7 +18,9 @@ This repository is dedicated to the noble pursuit of food hunting! 🍕🍣🍩 
 pip install -r requirements.txt
 ```
 
-3. Run the bot
+**Step 3:** Copy the `.env.example` file and rename it to `.env` and fill in the required fields
+
+**Step 4:** Run the bot
 
 ```bash
 python bot.py
@@ -31,7 +33,7 @@ python bot.py
 
 ## Roadmap 🗺️
 
-| Version | Features |
-| ------- | -------- |
-| **v0.1**    | - Create a Discord bot <br> - Scrape the free food events from BullsConnect <br> - Send the food events to the Discord channel at 12am every day <br> - Respond to user's command '!food' to give the food events from the current time to the end of the day |
-| **v0.2** (Upcoming) | - Create a web page to display the food events <br> - Train AI to classify food types from descriptions|
+| Version             | Features                                                                                                                                                                                                                                                      |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **v0.1**            | - Create a Discord bot <br> - Scrape the free food events from BullsConnect <br> - Send the food events to the Discord channel at 12am every day <br> - Respond to user's command '!food' to give the food events from the current time to the end of the day |
+| **v0.2** (Upcoming) | - Create a web page to display the food events <br> - Train AI to classify food types from descriptions                                                                                                                                                       |
