@@ -1,24 +1,32 @@
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import time
-from datetime import datetime
+import datetime
 
+
+def is_today(string):
+    today = datetime.datetime.today()
+    formatted_date = today.strftime("%a, %b %d, %Y")
+    return string == formatted_date
 
 class Event:
     def __init__(self):
         self.name = ""
         self.id = ""
-        self.tags = []
-        self.date = datetime.min #(1,1,1,0,0) Year 1, month 1, date 1, hour 1, minute 1
+        self.tags = set()
+        self.date = ""
+        self.time = ""
         self.location = ""
     def get_info(self):
         return {"name"    :self.name,
                 "id"      :self.id,
                 "tags"    :self.tags,
-                "date"    :self.date,
+                "date"    :self.date, 
+                "time"    :self.time,
                 "location":self.location}
         
 def format_events(event_html):
@@ -26,12 +34,33 @@ def format_events(event_html):
     event_source = BeautifulSoup(event_html, "html.parser")
     
     li_container = event_source.find("li")
-    li_container_text = li_container.text
+    listing_element = li_container.find("div",class_="listing-element")
+    row = listing_element.find("div",class_="row")
+    media_container = row.find("div",class_="listing-element__title-block col-md-8")
+    media = media_container.find("div",class_="media")
+    media_body = media.find("div",class_="media-body")
     
+    name_container = media_body.find("h3")
+    date_container = media_body.find("div",class_="row")
+    tag_container = media_body.find("div",role="group")
+
+    date_div = date_container.find_all("div", class_="media-heading")
+    date_text = date_div[1].find_all("p")[0].text.strip() 
+    time_text = date_div[1].find_all("p")[1].text.strip()
+    
+    
+    for tag in tag_container.find_all("span"):
+        event_object.tags.add(tag.text)
+    
+    event_object.name= name_container.find("a").text
     event_object.id = li_container["id"]
-    print(li_container_text.strip())
-    print(event_object.id)
-    print("\n\n")
+    event_object.date = date_text
+    event_object.time = time_text
+
+    if is_today(event_object.date):
+        print(event_object.get_info())
+        print("\n\n")
+
 
 driver = webdriver.Firefox()
 driver.maximize_window()
@@ -95,10 +124,3 @@ with open("bulls_connect_page_source.html","w",encoding="utf8") as event_source_
     for event_html in events_true_list:
         format_events(event_html)
         event_source_file.write(event_html+"\n")
-
-
-
-
-
-
-# Close the browser
