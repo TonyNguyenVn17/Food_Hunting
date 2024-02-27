@@ -47,7 +47,7 @@ def format_events(event_html):
     date_div = date_container.find_all("div", class_="media-heading")
     date_text = date_div[1].find_all("p")[0].text.strip() 
     time_text = date_div[1].find_all("p")[1].text.strip()
-    
+    location_text = date_container.find("div",class_="col-md-4 col-lg-4").text
     
     for tag in tag_container.find_all("span"):
         event_object.tags.add(tag.text)
@@ -56,11 +56,12 @@ def format_events(event_html):
     event_object.id = li_container["id"]
     event_object.date = date_text
     event_object.time = time_text
+    event_object.location = location_text.strip()
 
     if is_today(event_object.date):
         print(event_object.get_info())
         print("\n\n")
-
+    
 
 driver = webdriver.Firefox()
 driver.maximize_window()
