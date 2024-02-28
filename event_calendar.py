@@ -1,6 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from time import sleep
+import time
 from dotenv import load_dotenv
 import os
 # sign in with usf account then log out then run the program again
@@ -25,15 +25,14 @@ def eventCalendar():
 
     # Auto login
     driver.get('https://www.campusgroups.com/shibboleth/login?idp=usf')
-    sleep(10)
+    time.sleep(10)
     # Loop until a hooman log in and authenticate
-    while check_exists_by_ID("i0281")==True: # A random element in the USF login website
+    while check_exists_by_ID("i011") == True or check_exists_by_ID("displayName")==True:  # A random element in the USF login website
         print('Error: Need hooman authentication')
         driver.get('https://www.campusgroups.com/shibboleth/login?idp=usf')
-        sleep(30) # 30 seconds to enter username, password and authenticate
+        time.sleep(100)  # 100 seconds to enter username, password and authenticate
     else:
         driver.get('https://bullsconnect.usf.edu/events?topic_tags=7276307')
-        sleep(10)
-
+        time.sleep(1)
 if __name__ == "__main__":
     eventCalendar()
