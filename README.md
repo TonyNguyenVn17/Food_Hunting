@@ -29,7 +29,8 @@ python bot.py
 ## Features 🌟
 
 1. 📅 Provides information about free food events at 12am every day
-2. 🤖 Responds to user's command '!food' to give the food events from the current time to the end of the day
+2. 🤖 Responds to user's command '!events' to give the food events from the current time to the end of the day
+3. 🎲 Users can try their luck with '!dice'
 
 ## Roadmap 🗺️
 
