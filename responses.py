@@ -10,7 +10,7 @@ def get_response(user_input : str) -> str:
         return 'Well, you\'re silent...'
     elif lowered.startswith('hello'):
         return 'Hello there!'
-    elif lowered.startswith('good?'):
+    elif lowered.startswith('good'):
         return 'Good, thanks!'
     elif lowered.startswith('bye'):
         return 'See you!'
