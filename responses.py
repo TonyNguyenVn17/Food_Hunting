@@ -20,15 +20,17 @@ def get_response(user_input : str) -> str:
     elif lowered.startswith('dice'):
         return f'You rolled: {randint(1,6)}'
     elif lowered.startswith('events'):
+        """
+        return every row in database as event as a joined string
+        """
         # data = scrape_data() return data directly from bullsconnect
         # return event from database
         db = FoodDatabase()
         data = db.get_all_event()
-        output = "" #return all event as a joined string
+        output = ""
         for index, event in enumerate(data):
-            event_str = f"\n> Event {index+1}: {event[0]} \nLocation: {event[4]} \nTime: {event[3]}\n"
+            event_str = f"## Event {index+1} \n > **Name**: {event[0]}\n > **Location**: {event[4]}\n > **Time**: {event[3]}\n"
             output += str(event_str)
-            print(event_str)
             
         
         # for name,event_list in data.items():
