@@ -49,6 +49,7 @@ def get_data() -> Dict[str, List[Dict[str, str]]]:
     check_login()
     open_food_page()
     events = find_events()
+    
     data = {}
     for event in events:
         event_name = event['name']
