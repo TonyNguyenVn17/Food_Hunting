@@ -1,6 +1,9 @@
 from random import choice, randint
 from typing import List, Dict
 from get_food_event import check_login, open_food_page, find_events
+from db import FoodDatabase
+
+
 def get_response(user_input : str) -> str:
     lowered: str = user_input.lower()
     if lowered[0] != "!":
@@ -17,7 +20,10 @@ def get_response(user_input : str) -> str:
     elif lowered.startswith('dice'):
         return f'You rolled: {randint(1,6)}'
     elif lowered.startswith('events'):
-        data = get_data()
+        # data = scrape_data() return data directly from bullsconnect
+        # return event from database
+        db = FoodDatabase()
+        data = db.get_all_event()
         names=[]
         events = []
         for name,event_list in data.items():
@@ -45,11 +51,15 @@ def get_response(user_input : str) -> str:
    # }
 
 
-def get_data() -> Dict[str, List[Dict[str, str]]]:
+def scrape_data() -> Dict[str, List[Dict[str, str]]]:
+    """
+    run at 12AM daily
+    add data to db
+    """
+    db = FoodDatabase()
     check_login()
     open_food_page()
     events = find_events()
-    
     data = {}
     for event in events:
         event_name = event['name']
@@ -60,7 +70,8 @@ def get_data() -> Dict[str, List[Dict[str, str]]]:
             "time": event['time'],
             "location": event['location']
         }]
-    return data
+        db.add_event(event)
+         
 
 if __name__ == "__main__":
     cmd='!events'

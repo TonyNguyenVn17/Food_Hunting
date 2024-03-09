@@ -1,45 +1,60 @@
 import sqlite3
 
-#create a connection to food.db database 
 
 class FoodDatabase():
     def __init__(self):
+        """
+        database already connect to table
+        """
         self.connect_db()
         self.init_table()
     def connect_db(self):
-        self.con = sqlite3.connect("food.db") #return Connection object
+        self.con = sqlite3.connect("food.db") ##create connection to food.db database 
         self.cur = self.con.cursor() #create database cursors
     def init_table(self):
         self.cur.execute("CREATE TABLE IF NOT EXISTS food_event(name,id,date,time,location,tags)")
         self.con.commit()
-    def add_event(self,event_list):
-        for event in event_list:
-            self.cur.execute(f"INSERT INTO food_event VALUES(?, ?, ?, ?, ?, ?)", (event["name"], str(self.generate_id() + 1), event["date"], event["time"], event["location"], event["tags"]))
-            self.con.commit()
+    def add_event(self,event):
+        """
+        insert individual event (dictionary) into database 
+        """
+        self.cur.execute(f"INSERT INTO food_event VALUES(?, ?, ?, ?, ?, ?)", (event["name"], str(self.generate_id() + 1), event["date"], even["time"], event["location"], event["tags"]))
+        self.con.commit()
     def generate_id(self):
+        """
+        generate individual event id by its index in database
+        """
         query = f"SELECT COUNT(*) FROM food_event"
         self.cur.execute(query)
         result = self.cur.fetchone()[0]+1
         return result
-    def close_db(self):
-        self.con.commit()
-        self.cur.close()
-        self.con.close()
-    def __del__(self):
-        self.close_db()
     def get_all_event(self):
+        """
+        return all event row in database
+        """
         query = "SELECT * FROM food_event"
         self.cur.execute(query)
         rows = self.cur.fetchall()
         return rows
     def remove_data(self):
+        """
+        remove all rows
+        only run if necessary
+        """
         query = "DELETE FROM food_event"
         self.cur.execute(query)
         self.con.commit()
+    def __del__(self):
+        self.close_db()
+    def close_db(self):
+        self.con.commit()
+        self.cur.close()
+        self.con.close()
 
 if __name__ == "__main__":
     db = FoodDatabase()
     
+    # mock data
     events = [
         {"name": "Event1", "date": "2024-03-09", "time": "12:00", "location": "Location1", "tags": "tag1"},
         {"name": "Event2", "date": "2024-03-10", "time": "13:00", "location": "Location2", "tags": "tag2"},
