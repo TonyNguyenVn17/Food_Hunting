@@ -1,6 +1,6 @@
 from random import choice, randint
 from typing import List, Dict
-from get_food_event import check_login, open_food_page, find_events
+# from get_food_event import check_login, open_food_page, find_events
 from db import FoodDatabase
 
 
@@ -24,17 +24,22 @@ def get_response(user_input : str) -> str:
         # return event from database
         db = FoodDatabase()
         data = db.get_all_event()
-        names=[]
-        events = []
-        for name,event_list in data.items():
-            for event in event_list:
-                events.append(event)
-                names.append(name)
-        formatted_events = []
-        for i in range(len(events[:10])):
-            one_event = f"Event {i+1}: {names[i]} \nLocation: {events[i]['location']} \nTime: {events[i]['time']}\n"
-            formatted_events.append(one_event)
-        return '\n'.join(formatted_events)
+        output = "" #return all event as a joined string
+        for index, event in enumerate(data):
+            event_str = f"\n> Event {index+1}: {event[0]} \nLocation: {event[4]} \nTime: {event[3]}\n"
+            output += str(event_str)
+            print(event_str)
+            
+        
+        # for name,event_list in data.items():
+        #     for event in event_list:
+        #         events.append(event)
+        #         names.append(name)
+        # formatted_events = []
+        # for i in range(len(events[:10])):
+        #     one_event = f"Event {i+1}: {names[i]} \nLocation: {events[i]['location']} \nTime: {events[i]['time']}\n"
+        #     formatted_events.append(one_event)
+        return output
     elif lowered.startswith('help'):
         return """!hello: Say hello to users \n good?: My feeling now \n !bye: Say goodbye to Bot \n !dice: How lucky are you today \n !events: List of food events today \n !help: Showing this lists"""
     else:
