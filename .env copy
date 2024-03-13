@@ -2,3 +2,4 @@ DISCORD_TOKEN=
 SERVER_ID= 
 CHANNEL_ID= 
 CHROME_PROFILE_PATH=
+SELE_HUB_URL='http://selenium-chrome:4444/wd/hub'
