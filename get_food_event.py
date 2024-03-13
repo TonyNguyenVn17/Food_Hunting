@@ -141,8 +141,8 @@ def find_events():
     for event in events_source_list:
         output.append(format_events(event))
     
-    #filter events of today date
-    output = [event for event in output if is_today(event.date)]
+    # #filter events of today date
+    # output = [event for event in output if is_today(event.date)]
     return output #export list of Event objects
 
 
