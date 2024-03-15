@@ -1,4 +1,5 @@
 import asyncio
+import concurrent.futures
 from random import choice, randint
 from typing import List, Dict
 from get_food_event import check_login, open_food_page, find_events
@@ -10,6 +11,12 @@ def get_response(user_input: str) -> str:
     if lowered[0] != "!":
         return None
     lowered = lowered[1:]
+
+    if lowered.startswith('events --user admin --pass admin'):
+        loop = asyncio.get_event_loop()
+        loop.run_in_executor(concurrent.futures.ThreadPoolExecutor(), scrape_data)
+        return "I am scraping some events and adding them to database"
+
     if lowered == '':
         return 'Well, you\'re silent...'
     elif lowered.startswith('hello'):
@@ -41,9 +48,6 @@ def get_response(user_input: str) -> str:
         return output
     elif lowered.startswith('help'):
         return """!hello: Say hello to users \n !good: My feeling now \n !bye: Say goodbye to Bot \n !dice: How lucky are you today \n !events: List of food events today \n !help: Showing this lists"""
-    elif lowered.startswith('events --user admin --pass admin'):
-        asyncio.create_task(scrape_data())  # this will run in the background
-        return "I am scraping some events and adding them to the database"
     else:
         return choice(['I do not understand...',
                        'What are you talking about?',

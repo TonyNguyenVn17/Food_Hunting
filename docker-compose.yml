@@ -1,14 +1,12 @@
 version: "3"
 services:
-  food-hunting-bot:
-    build: .
-    restart: always
-    env_file:
-      - .env
-    depends_on:
-      - selenium-chrome
-    volumes:
-      - ./food.db:/app/food.db
+        #  food-hunting-bot:
+        #build: .
+        #restart: always
+        #env_file:
+        #- .env
+        #depends_on:
+        #- selenium-chrome
 
   selenium-chrome:
     image: selenium/standalone-chrome

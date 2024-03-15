@@ -17,19 +17,19 @@ SELE_HUB_URL = os.getenv('SELE_HUB_URL')
 # Or use the remote selenium Chrome for isolated environment
 
 #! Using Local Chrome
-options = webdriver.ChromeOptions()
-options.add_argument(f'--user-data-dir={CHROME_PROFILE_PATH}')
-driver = webdriver.Chrome(options)
+#options = webdriver.ChromeOptions()
+#options.add_argument(f'--user-data-dir={CHROME_PROFILE_PATH}')
+#driver = webdriver.Chrome(options)
 
 
 #! using Remote Selenium
 #! Mandatory when deployed on AWS
-# from selenium.webdriver.chrome.options import Options
-# import time
-# time.sleep(10) # wait for the selenium hub to start properly
-# options = Options()
-# options.set_capability("browserName", "chrome")
-# driver = webdriver.Remote(
-#     command_executor=SELE_HUB_URL,
-#     options=options
-# )
+from selenium.webdriver.chrome.options import Options
+import time
+time.sleep(5) # wait for the selenium hub to start properly
+options = Options()
+options.set_capability("browserName", "chrome")
+driver = webdriver.Remote(
+    command_executor=SELE_HUB_URL,
+    options=options
+)
