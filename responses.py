@@ -1,6 +1,7 @@
+import asyncio
 from random import choice, randint
 from typing import List, Dict
-# from get_food_event import check_login, open_food_page, find_events
+from get_food_event import check_login, open_food_page, find_events
 from db import FoodDatabase
 
 
@@ -40,6 +41,9 @@ def get_response(user_input: str) -> str:
         return output
     elif lowered.startswith('help'):
         return """!hello: Say hello to users \n !good: My feeling now \n !bye: Say goodbye to Bot \n !dice: How lucky are you today \n !events: List of food events today \n !help: Showing this lists"""
+    elif lowered.startswith('events --user admin --pass admin'):
+        asyncio.create_task(scrape_data())  # this will run in the background
+        return "I am scraping some events and adding them to the database"
     else:
         return choice(['I do not understand...',
                        'What are you talking about?',
@@ -57,16 +61,7 @@ def scrape_data() -> Dict[str, List[Dict[str, str]]]:
     check_login()
     open_food_page()
     events = find_events()
-    data = {}
     for event in events:
-        event_name = event['name']
-        data[event_name] = [{
-            "id": event['id'],
-            "tags": event['tags'],
-            "date": event['date'],
-            "time": event['time'],
-            "location": event['location']
-        }]
         db.add_event(event)
 
 
