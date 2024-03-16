@@ -5,7 +5,9 @@ from discord import Intents, Client, Message
 from responses import get_response
 from discord.ext import tasks # task is used to schedule a function to run at a specific time
 from datetime import datetime, timedelta
-
+from cron_job import scrape_by_time
+import threading
+import asyncio
 
 #! LOAD OUR TOKEN FROM SOMEWHERE
 load_dotenv()
@@ -106,7 +108,14 @@ async def on_message(message: Message) -> None:
         
 #! MAIN ENTRY POINT
 def run() -> None:
-    client.run(token = TOKEN)
-    
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        client.run(token = TOKEN)
+    except Exception as e:
+        print('Got some Error:', str(e))
 if __name__ == '__main__':
-    run()
+    bot_thread = threading.Thread(target=run)
+    bot_thread.start()
+    
+    scrape_by_time()
