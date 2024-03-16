@@ -1,5 +1,4 @@
 import time  # Default lib in Python
-import datetime  # Default lib in Python
 from typing import List, Dict, Union, Set  # Default lib in Python
 from selenium.webdriver.common.by import By  # From pip install
 from selenium.webdriver.support.ui import WebDriverWait  # From pip install
@@ -10,13 +9,6 @@ from config import driver  # Self defined
 WAIT = WebDriverWait(driver, 20)
 
 
-def is_today(event_date):
-    """
-    check if event's date is today
-    """
-    today = datetime.datetime.today()
-    formatted_today_date = today.strftime("%a, %b %d, %Y")
-    return event_date == formatted_today_date
 
 # define Event object
 
@@ -25,7 +17,7 @@ class Event:
     def __init__(self) -> None:
         self.name = ""
         self.id = ""
-        self.tags = set()
+        self.tags = ""
         self.date = ""
         self.time = ""
         self.location = ""
@@ -39,7 +31,7 @@ class Event:
                 "location": self.location}
 
 
-def format_events(event_html: str) -> Dict[str, Union[str, Set[str]]]:
+def format_events(event_html: str) -> Dict[str, str]:
     """
     convert HTML source code into event object
     """
@@ -68,15 +60,18 @@ def format_events(event_html: str) -> Dict[str, Union[str, Set[str]]]:
     time_text = date_div[1].find_all("p")[1].text.strip()
     location_text = date_container.find("div", class_="col-md-4 col-lg-4").text
 
-    # initialize attributes in Event object
+    # concatenate all tags into one text
+    tag_text = ""
     for tag in tag_container.find_all("span"):
-        event_object.tags.add(tag.text)
-
+        tag_text.join(tag)
+        
+    # initialize attributes in Event object
     event_object.name = name_container.find("a").text
     event_object.id = li_container["id"]
     event_object.date = date_text
     event_object.time = time_text
     event_object.location = location_text.strip()
+    event_object.tag = tag_text
 
     # return Event object as dictionary
     return event_object.get_info()
