@@ -5,30 +5,12 @@ from selenium.webdriver.support.ui import WebDriverWait  # From pip install
 from selenium.webdriver.support import expected_conditions as EC  # From pip install
 from bs4 import BeautifulSoup  # From pip install
 from config import driver  # Self defined
-
+from Event import Event
 WAIT = WebDriverWait(driver, 20)
 
 
 
-# define Event object
 
-
-class Event:
-    def __init__(self) -> None:
-        self.name = ""
-        self.id = ""
-        self.tags = ""
-        self.date = ""
-        self.time = ""
-        self.location = ""
-
-    def get_info(self) -> Dict[str, Union[str, Set[str]]]:
-        return {"name": self.name,
-                "id": self.id,
-                "tags": self.tags,
-                "date": self.date,
-                "time": self.time,
-                "location": self.location}
 
 
 def format_events(event_html: str) -> Dict[str, str]:
@@ -59,19 +41,17 @@ def format_events(event_html: str) -> Dict[str, str]:
     date_text = date_div[1].find_all("p")[0].text.strip()
     time_text = date_div[1].find_all("p")[1].text.strip()
     location_text = date_container.find("div", class_="col-md-4 col-lg-4").text
-
-    # concatenate all tags into one text
-    tag_text = ""
-    for tag in tag_container.find_all("span"):
-        tag_text.join(tag)
         
     # initialize attributes in Event object
+    for tag in tag_container.find_all("span"):
+        event_object.tags.add(tag.text)
+    
     event_object.name = name_container.find("a").text
     event_object.id = li_container["id"]
     event_object.date = date_text
     event_object.time = time_text
     event_object.location = location_text.strip()
-    event_object.tag = tag_text
+
 
     # return Event object as dictionary
     return event_object.get_info()
