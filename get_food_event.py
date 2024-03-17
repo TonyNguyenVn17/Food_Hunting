@@ -1,45 +1,19 @@
 import time  # Default lib in Python
-import datetime  # Default lib in Python
 from typing import List, Dict, Union, Set  # Default lib in Python
 from selenium.webdriver.common.by import By  # From pip install
 from selenium.webdriver.support.ui import WebDriverWait  # From pip install
 from selenium.webdriver.support import expected_conditions as EC  # From pip install
 from bs4 import BeautifulSoup  # From pip install
 from config import driver  # Self defined
-
+from Event import Event
 WAIT = WebDriverWait(driver, 20)
 
 
-def is_today(event_date):
-    """
-    check if event's date is today
-    """
-    today = datetime.datetime.today()
-    formatted_today_date = today.strftime("%a, %b %d, %Y")
-    return event_date == formatted_today_date
-
-# define Event object
 
 
-class Event:
-    def __init__(self) -> None:
-        self.name = ""
-        self.id = ""
-        self.tags = set()
-        self.date = ""
-        self.time = ""
-        self.location = ""
-
-    def get_info(self) -> Dict[str, Union[str, Set[str]]]:
-        return {"name": self.name,
-                "id": self.id,
-                "tags": self.tags,
-                "date": self.date,
-                "time": self.time,
-                "location": self.location}
 
 
-def format_events(event_html: str) -> Dict[str, Union[str, Set[str]]]:
+def format_events(event_html: str) -> Dict[str, str]:
     """
     convert HTML source code into event object
     """
@@ -67,16 +41,17 @@ def format_events(event_html: str) -> Dict[str, Union[str, Set[str]]]:
     date_text = date_div[1].find_all("p")[0].text.strip()
     time_text = date_div[1].find_all("p")[1].text.strip()
     location_text = date_container.find("div", class_="col-md-4 col-lg-4").text
-
+        
     # initialize attributes in Event object
     for tag in tag_container.find_all("span"):
         event_object.tags.add(tag.text)
-
+    
     event_object.name = name_container.find("a").text
     event_object.id = li_container["id"]
     event_object.date = date_text
     event_object.time = time_text
     event_object.location = location_text.strip()
+
 
     # return Event object as dictionary
     return event_object.get_info()

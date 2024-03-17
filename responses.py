@@ -2,7 +2,7 @@ import asyncio
 import concurrent.futures
 from random import choice, randint
 from typing import List, Dict
-from get_food_event import check_login, open_food_page, find_events
+from cron_job import scrape_data
 from db import FoodDatabase
 
 
@@ -27,15 +27,20 @@ def get_response(user_input: str) -> str:
         return 'See you!'
     elif lowered.startswith('dice'):
         return f'You rolled: {randint(1,6)}'
+    elif lowered.startswith('events --user admin --pass admin'):
+        scrape_data()
+        return "I am scraping some events and adding them to the database"
     elif lowered.startswith('events'):
         """
         return every row in database as event as a joined string
         """
-        # data = scrape_data() return data directly from bullsconnect
-        # return event from database
+        #datetime 
+        #time == 12 ->
+        # data = scrape_data()
+        
         db = FoodDatabase()
         # TODO: Replace with today's event
-        data = db.get_all_event()
+        data = db.get_today_event()
         output = ""
 
         if not data:
@@ -54,19 +59,7 @@ def get_response(user_input: str) -> str:
                        'Do you mind rephrasing that?'])
 
 
-def scrape_data() -> Dict[str, List[Dict[str, str]]]:
 
-    # TODO: Implement this function
-    """
-    scrape at 12AM and 12PM daily
-    then add data to db
-    """
-    db = FoodDatabase()
-    check_login()
-    open_food_page()
-    events = find_events()
-    for event in events:
-        db.add_event(event)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,8 @@
 import sqlite3
 from datetime import datetime
 from typing import Dict, List, Union, Set
-from get_food_event import Event
+from Event import Event
+
 
 
 class FoodDatabase:
@@ -39,7 +40,7 @@ class FoodDatabase:
         except ValueError as e:
             return "Error:", e
 
-    def add_event(self, event: Event) -> None:
+    def add_event(self, event : Event) -> None:
         """
         insert individual event (dictionary) into database 
         """
@@ -65,6 +66,20 @@ class FoodDatabase:
         self.cur.execute(query)
         rows = self.cur.fetchall()
         return rows
+    def get_today_event(self) -> tuple:
+        """
+        return event only today from database
+        """
+        date_format = "%a, %b %d, %Y"
+        today = datetime.today()
+        formatted_date = today.strftime("%a %Y-%m-%d")
+        
+        self.cur.execute("SELECT * FROM food_event WHERE date = ?", (formatted_date,))
+        today_events = self.cur.fetchall()
+        self.con.commit()
+        
+        return today_events if today_events else None
+        
 
     def remove_data(self) -> None:
         """
@@ -74,6 +89,7 @@ class FoodDatabase:
         query = "DELETE FROM food_event"
         self.cur.execute(query)
         self.con.commit()
+    
 
     def close_db(self) -> None:
         self.con.commit()
@@ -89,31 +105,29 @@ if __name__ == "__main__":
 
     # mock data
     events = [
-        {"name": "Event1", "date": "Thur, Mar 07, 2024",
-            "time": "12:00", "location": "Location1", "tags": "tag1"},
-        {"name": "Event2", "date": "Mon, Mar 07, 2024",
-            "time": "13:00", "location": "Location2", "tags": "tag2"},
-        {"name": "Event3", "date": "Tues, Mar 07, 2024",
-            "time": "14:00", "location": "Location3", "tags": "tag3"},
-        {"name": "Event4", "date": "Wed, Mar 07, 2024",
-            "time": "15:00", "location": "Location4", "tags": "tag4"},
-        {"name": "Event5", "date": "Thur, Mar 07, 2024",
-            "time": "16:00", "location": "Location5", "tags": "tag5"},
-        {"name": "Event6", "date": "Thur, Mar 07, 2024",
-            "time": "17:00", "location": "Location6", "tags": "tag6"},
-        {"name": "Event7", "date": "Fri, Mar 07, 2024",
-            "time": "18:00", "location": "Location7", "tags": "tag7"},
-        {"name": "Event8", "date": "Sun, Mar 07, 2024",
-            "time": "19:00", "location": "Location8", "tags": "tag8"},
-        {"name": "Event9", "date": "Sat, Mar 07, 2024",
-            "time": "20:00", "location": "Location9", "tags": "tag9"},
-        {"name": "Event10", "date": "Thur, Mar 07, 2024",
-            "time": "21:00", "location": "Location10", "tags": "tag10"}
-    ]
-
-    for event in events:
-        db.add_event(event)
-
+    {"name": "test1", "date": "Sat, Mar 16, 2024",
+        "time": "12:00", "location": "Location1", "tags": ("tag1", "tag2", "tagn")},
+    {"name": "test2", "date": "Sat, Mar 16, 2024",
+        "time": "12:00", "location": "Location1", "tags": "tag1"},
+    {"name": "test3", "date": "Sat, Mar 16, 2024",
+        "time": "12:00", "location": "Location1", "tags": "tag1"},
+    {"name": "test4", "date": "Sat, Mar 16, 2024",
+        "time": "12:00", "location": "Location1", "tags": "tag1"},
+    {"name": "test5", "date": "Sat, Mar 16, 2024",
+        "time": "12:00", "location": "Location1", "tags": "tag1"},
+    {"name": "Event2", "date": "Mon, Mar 07, 2024",
+        "time": "13:00", "location": "Location2", "tags": "tag2"},
+    {"name": "Event3", "date": "Tues, Mar 07, 2024",
+        "time": "14:00", "location": "Location3", "tags": "tag3"},
+    {"name": "Event4", "date": "Wed, Mar 07, 2024",
+        "time": "15:00", "location": "Location4", "tags": "tag4"},
+    {"name": "test6", "date": "Sat, Mar 16, 2024",
+        "time": "12:00", "location": "Location1", "tags": "tag1"},
+  
+]
+    
+    # for event in events:
+    #     db.add_event(event)
     events = db.get_all_event()
     for event in events:
         print(event)

@@ -1,17 +1,17 @@
 version: "3"
 services:
-        #  food-hunting-bot:
-        #build: .
-        #restart: always
-        #env_file:
-        #- .env
-        #depends_on:
-        #- selenium-chrome
+  food-hunting-bot:
+    build: .
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - selenium-chrome
 
-  selenium-chrome:
-    image: selenium/standalone-chrome
-    ports:
-      - "4444:4444"
-    volumes:
-      - /dev/shm:/dev/shm # This will share host memory with the container, which is required for Chrome to work properly
+  #selenium-chrome:
+    # image: selenium/standalone-chrome
+    # ports:
+    #   - "4444:4444"
+    #volumes:
+      # - /dev/shm:/dev/shm # This will share host memory with the container, which is required for Chrome to work properly
       # - /sele-config/chrome-profile:/home/seluser/.config/google-chrome
