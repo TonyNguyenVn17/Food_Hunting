@@ -5,8 +5,6 @@ services:
     restart: always
     env_file:
       - .env
-    depends_on:
-      - selenium-chrome
 
   #selenium-chrome:
     # image: selenium/standalone-chrome
