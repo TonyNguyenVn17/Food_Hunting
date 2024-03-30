@@ -27,11 +27,16 @@ intents.message_content = True # NOQA
 client: Client = Client(intents=intents) # intents from client
 
 def get_embed(event_list : List[dict]) -> List[Embed]:
+    """
+    convert list of dictionary (list of events) into list of discord Embed objects
+    """
     output_embeds = []
 
     for event in event_list:
         embed = Embed(title = event["title"], description = event["description"][0], color = event["color"], timestamp = event["timestamp"])
+        embed.set_footer(text = event["footer"]["text"])
         output_embeds.append(embed)
+    
     return output_embeds
 #! MESSAGE FUNCTIONALITY
 async def send_message(message: Message, user_message: str) -> None:
@@ -56,8 +61,6 @@ async def send_message(message: Message, user_message: str) -> None:
             await message.author.send(content = response["content"]) if is_private else await message.channel.send(content = response["content"])
         else:
             await message.author.send(content = response["content"], embeds = embeds) if is_private else await message.channel.send(content = response["content"], embeds = embeds)
-        # if private is said to true, send the message privately
-        # otherwise send to the current channel
         
     except Exception  as e:
         print(e)
@@ -100,53 +103,6 @@ async def on_ready():
         channel = guild.get_channel(CHANNEL_ID) 
         if channel is not None:
             await channel.send("Hello What's Up Baby I am back")
-
-
-# ! MESSAGE GENERATION
-# @client.command()
-# async def generate_embed(ctx, event_list : list):
-#     DATE_STAMP = datetime.now().strftime("%m/ %d/ %Y")
-
-#     # initialize json embed
-#     json_data = {}
-
-#     json_data["content"] = "**Here's the full list of today's food events. Enjoy!**🍽️"
-#     json_data["tts"]     = False
-#     json_data["embeds"]  = []
-
-#     for index, event in enumerate(event_list):
-#         event_json = {}
-
-#         event_json["id"]          = index + 1
-#         event_json["title"]       = f"{index + 1}. {event[0]}"
-#         event_json["description"] = f"**Location**: {event[4]}\n**Time**: {event[3]} PM\n",
-#         event_json["color"]       = 2346475
-#         event_json["fields"]      = []
-#         event_json["footer"]      = [{ "text": "FeedMe" },]
-#         event_json["timestamp"]   = DATE_STAMP
-        
-#         json_data["embeds"].append(event_json)
-
-#     json_data["components"] = []
-#     json_data["actions"]    = {}
-#     json_data["username"]   = "FeedMe"
-#     json_data["avatar_url"] = "https://i.postimg.cc/x1xSXrZ4/image-removebg.png"
-    
-
-#     # generate list of embeds
-#     embeds = []
-#     for embed_data in json_data["embeds"]:
-#         embed = discord.Embed(
-#             title       = embed_data["title"],
-#             description = embed_data["description"],
-#             color       = embed_data["color"]
-#         )
-#         embed.set_footer(text=embed_data["footer"]["text"])
-#         embed.set_timestamp(embed_data["timestamp"])
-#         embeds.append(embed)
-    
-#     # Send message with multiple embeds
-#     await ctx.send(content=json_data["content"], embeds = embeds)
 
 #! HANDLING INCOMING MESSAGES
 @client.event
