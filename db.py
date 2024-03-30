@@ -105,15 +105,15 @@ if __name__ == "__main__":
 
     # mock data
     events = [
-    {"name": "test1", "date": "Sat, Mar 16, 2024",
+    {"name": "test1", "date": "Sat, Mar 30, 2024",
         "time": "12:00", "location": "Location1", "tags": ("tag1", "tag2", "tagn")},
-    {"name": "test2", "date": "Sat, Mar 16, 2024",
+    {"name": "test2", "date": "Sat, Mar 30, 2024",
         "time": "12:00", "location": "Location1", "tags": "tag1"},
-    {"name": "test3", "date": "Sat, Mar 16, 2024",
+    {"name": "test3", "date": "Sat, Mar 30, 2024",
         "time": "12:00", "location": "Location1", "tags": "tag1"},
-    {"name": "test4", "date": "Sat, Mar 16, 2024",
+    {"name": "test4", "date": "Sat, Mar 30, 2024",
         "time": "12:00", "location": "Location1", "tags": "tag1"},
-    {"name": "test5", "date": "Sat, Mar 16, 2024",
+    {"name": "test5", "date": "Sat, Mar 30, 2024",
         "time": "12:00", "location": "Location1", "tags": "tag1"},
     {"name": "Event2", "date": "Mon, Mar 07, 2024",
         "time": "13:00", "location": "Location2", "tags": "tag2"},
@@ -126,8 +126,8 @@ if __name__ == "__main__":
   
 ]
     
-    # for event in events:
-    #     db.add_event(event)
+    for event in events:
+        db.add_event(event)
     events = db.get_all_event()
     for event in events:
         print(event)
