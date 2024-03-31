@@ -126,6 +126,7 @@ def find_events():
     try:
         event_raw_list = WAIT.until(EC.visibility_of_element_located((By.ID,'divAllItems')))
         event_list = event_raw_list.find_elements(By.TAG_NAME, "li") #return all events as list of WebElement objects
+        print(event_list)
     except:
         print("Events not loaded")
     
