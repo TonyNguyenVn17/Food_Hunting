@@ -4,26 +4,43 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
-from insta_web_links import keys_list
-from insta_web_links import link
-from config import driver # Self defined
-
+from insta_web_links import clubs_list  # Self defined
+from insta_web_links import link  # Self defined
+from config import driver  # Self defined
 WAIT = WebDriverWait(driver, 5)
-def open_insta_website(link):
-    driver.get(link) # specify link opened by driver
+
+
+def open_website(website_link):
+    driver.get(website_link)  # Specify link opened by driver
     return None
 
-def find_insta_posts():
-    WAIT.until(EC.presence_of_element_located((By.CLASS_NAME, '_aagw')))
-    post_button_list = driver.find_elements(By.CLASS_NAME, '_aagw')
-    return post_button_list
 
-def get_insta_first_comment(post_button_list):
+def find_posts():
+    WAIT.until(EC.presence_of_element_located((By.CLASS_NAME, '_aagw')))
+    post_list = driver.find_elements(By.CLASS_NAME, '_aagw')
+    return post_list
+
+
+def find_image():
+    WAIT.until(EC.presence_of_element_located((By.CLASS_NAME, '_aagv')))
+    image_list = driver.find_elements(By.CLASS_NAME, '_aagv')
+    return image_list
+
+
+def get_image_content(image_list):
+    image_contents_list =[]
+    for content_path in image_list:
+        content = content_path.get_attribute('innerHTML')
+        image_contents_list.append(content)
+    return image_contents_list
+
+
+def get_first_comment(post_list):
     comment_list = []
     i = 0
-    for button in post_button_list:
+    for post in post_list:
         time.sleep(0.5)
-        button.click()
+        post.click()
         time.sleep(2)
         try:
             WAIT.until(EC.presence_of_element_located((By.CSS_SELECTOR, '._ap3b._aaco._aacu._aacx._aad7._aade')))
@@ -39,12 +56,25 @@ def get_insta_first_comment(post_button_list):
             break
     return comment_list
 
+
+def merge_list_to_dict(comment_list, image_contents_list):
+    i = 0
+    dict = {}
+    while i < len(comment_list) and i < len(image_contents_list):
+        dict[f'Post {i+1}'] = {'Comment': {comment_list[i]}, 'Image content': {image_contents_list[i]}}
+        i+=1
+    return dict
+
+
 if __name__ == '__main__':
-    clubs_dict = {}
-    for i in range(0, len(keys_list())):
-        open_insta_website(link(i, keys_list()))
-        post_list = find_insta_posts()
-        comment_list = get_insta_first_comment(post_list)
-        clubs_dict[keys_list()[i]] = comment_list
+    clubs_content = {}
+    for i in range(0, len(clubs_list())):
+        open_website(link(i, clubs_list()))
+        post_list = find_posts()
+        image_list = find_image()
+        comment_list = get_first_comment(post_list)
+        image_contents_list = get_image_content(image_list)
+        comment_image_dict = merge_list_to_dict(comment_list, image_contents_list)
+        clubs_content[clubs_list()[i]] = comment_image_dict
         time.sleep(2)
-    print(clubs_dict)
+    print(clubs_content)
