@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime
 from typing import Dict, List, Union, Set
-from Event import Event
+from database.Event import Event
 
 
 
@@ -66,6 +66,7 @@ class FoodDatabase:
         self.cur.execute(query)
         rows = self.cur.fetchall()
         return rows
+    
     def get_today_event(self) -> tuple:
         """
         return event only today from database
@@ -80,7 +81,6 @@ class FoodDatabase:
         
         return today_events if today_events else None
         
-
     def remove_data(self) -> None:
         """
         remove all rows
@@ -90,7 +90,6 @@ class FoodDatabase:
         self.cur.execute(query)
         self.con.commit()
     
-
     def close_db(self) -> None:
         self.con.commit()
         self.cur.close()

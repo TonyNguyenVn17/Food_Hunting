@@ -1,5 +1,9 @@
-from get_food_event import find_events, check_login, open_food_page
-from db import FoodDatabase
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from scrape.get_food_event import find_events, check_login, open_food_page
+from database.db import FoodDatabase
 from typing import Dict, List
 from datetime import datetime, time
 import time as timer
@@ -14,7 +18,7 @@ def check_time() -> bool:
     """
     now = datetime.now()
     noon = time(12, 0)
-    before_midnight = time(23, 55)  # 11:55 PM
+    before_midnight = time(23, 55)   # 11:55 PM
     after_midnight = time(0, 5)      # 12:05 AM
     before_noon = time(11, 55)       # 11:55 AM
     after_noon = time(12, 5)         # 12:05 PM

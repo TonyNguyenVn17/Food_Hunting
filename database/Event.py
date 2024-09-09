@@ -3,13 +3,13 @@ from typing import Dict, Set, Union
 
 
 class Event:
-    def __init__(self) -> None:
-        self.name = ""
-        self.id = ""
-        self.tags = set()
-        self.date = ""
-        self.time = ""
-        self.location = ""
+    def __init__(self, name="", id="", tags=set(), date="", time="", location="") -> None:
+        self.name = name
+        self.id = id
+        self.tags = tags
+        self.date = date
+        self.time = time
+        self.location = location
 
     def get_info(self) -> Dict[str, Union[str, Set[str]]]:
         return {"name": self.name,

@@ -2,7 +2,7 @@ import asyncio
 from random import choice, randint
 from typing import List, Dict
 from cron_job import scrape_data
-from db import FoodDatabase
+from database.db import FoodDatabase
 
 
 def get_response(user_input: str) -> str:
@@ -29,11 +29,11 @@ def get_response(user_input: str) -> str:
         """
         #datetime 
         #time == 12 ->
-        # data = scrape_data()
+        data = scrape_data()
         
         db = FoodDatabase()
         # TODO: Replace with today's event
-        data = db.get_today_event()
+        # data = db.get_today_event()
         output = ""
 
         if not data:
@@ -50,10 +50,6 @@ def get_response(user_input: str) -> str:
         return choice(['I do not understand...',
                        'What are you talking about?',
                        'Do you mind rephrasing that?'])
-
-
-
-
 
 if __name__ == "__main__":
     cmd = '!events'
