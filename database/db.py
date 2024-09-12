@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime
 from typing import Dict, List, Union, Set
-from database.Event import Event
+from .event import Event
 
 
 
@@ -71,7 +71,6 @@ class FoodDatabase:
         """
         return event only today from database
         """
-        date_format = "%a, %b %d, %Y"
         today = datetime.today()
         formatted_date = today.strftime("%a %Y-%m-%d")
         
@@ -101,32 +100,9 @@ class FoodDatabase:
 
 if __name__ == "__main__":
     db = FoodDatabase()
-
-    # mock data
-    events = [
-    {"name": "test1", "date": "Sat, Mar 16, 2024",
-        "time": "12:00", "location": "Location1", "tags": ("tag1", "tag2", "tagn")},
-    {"name": "test2", "date": "Sat, Mar 16, 2024",
-        "time": "12:00", "location": "Location1", "tags": "tag1"},
-    {"name": "test3", "date": "Sat, Mar 16, 2024",
-        "time": "12:00", "location": "Location1", "tags": "tag1"},
-    {"name": "test4", "date": "Sat, Mar 16, 2024",
-        "time": "12:00", "location": "Location1", "tags": "tag1"},
-    {"name": "test5", "date": "Sat, Mar 16, 2024",
-        "time": "12:00", "location": "Location1", "tags": "tag1"},
-    {"name": "Event2", "date": "Mon, Mar 07, 2024",
-        "time": "13:00", "location": "Location2", "tags": "tag2"},
-    {"name": "Event3", "date": "Tues, Mar 07, 2024",
-        "time": "14:00", "location": "Location3", "tags": "tag3"},
-    {"name": "Event4", "date": "Wed, Mar 07, 2024",
-        "time": "15:00", "location": "Location4", "tags": "tag4"},
-    {"name": "test6", "date": "Sat, Mar 16, 2024",
-        "time": "12:00", "location": "Location1", "tags": "tag1"},
+    # today = datetime.today()
+    # formatted_date = today.strftime("%a %Y-%m-%d")
+    # logging.info(f"Today is: {formatted_date}")
+    # from bot.cron_job import scrape_data
+    # scrape_data()
   
-]
-    
-    # for event in events:
-    #     db.add_event(event)
-    events = db.get_all_event()
-    for event in events:
-        print(event)

@@ -7,6 +7,10 @@ from database.db import FoodDatabase
 from typing import Dict, List
 from datetime import datetime, time
 import time as timer
+import logging 
+log_file_path = os.path.join(os.path.dirname(__file__), 'scraping.log')
+logging.basicConfig(filename=log_file_path, level=logging.INFO, 
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 """
 This script is used to scrape food events data and add to database at 11:59PM or 12:00PM
@@ -37,8 +41,14 @@ def scrape_data() -> Dict[str, List[Dict[str, str]]]:
     check_login()
     open_food_page()
     events = find_events()
-    for event in events:
-        db.add_event(event)
+    print(f"Scraped {len(events)} events")
+    logging.info(f"Scraped {len(events)} events")
+    try:
+        for event in events:
+            db.add_event(event)
+    except Exception as e:
+        print("Error adding event to database:", e)
+    
 
 def scrape_by_time() -> None:
     print('Start Cronjob to Scrape Event at 12AM && 12PM')

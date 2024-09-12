@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from discord import Intents, Client, Message 
 from responses import get_response
-from discord.ext import tasks # task is used to schedule a function to run at a specific time
+from discord.ext import tasks, commands # task is used to schedule a function to run at a specific time
 from datetime import datetime, timedelta
 from cron_job import scrape_by_time
 import threading
@@ -44,9 +44,12 @@ async def send_message(message: Message, user_message: str) -> None:
         response : str = get_response(user_message)
         if response is None:
             return
-        await message.author.send(response) if is_private else await message.channel.send(response)
         # if private is said to true, send the message privately
         # otherwise send to the current channel
+        
+        await message.author.send(response) if is_private else await message.channel.send(response)
+        
+        paginator = commands.Paginator(prefix='', suffix='')
         
     except Exception  as e:
         print(e)

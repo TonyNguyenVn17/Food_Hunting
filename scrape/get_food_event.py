@@ -2,14 +2,19 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import time  
+import time 
+import logging 
 from typing import List, Dict, Union, Set  
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait 
 from selenium.webdriver.support import expected_conditions as EC 
 from bs4 import BeautifulSoup 
 from scrape.login import driver 
-from database.Event import Event
+from database.event import Event
+
+log_file_path = os.path.join(os.path.dirname(__file__), 'scraping.log')
+logging.basicConfig(filename=log_file_path, level=logging.INFO, 
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 try:
     WAIT = WebDriverWait(driver, 20)
@@ -108,7 +113,6 @@ def find_events() -> List[Event]:
             EC.visibility_of_element_located((By.ID, 'divAllItems')))
         # return all events as list of WebElement objects
         event_list = event_raw_list.find_elements(By.TAG_NAME, "li")
-        print(event_list)
     except:
         print("Events not loaded")
 
@@ -119,13 +123,16 @@ def find_events() -> List[Event]:
         if "list-group-item" in event.get_attribute("class") and "display: none;" not in event.get_attribute("style"):
             # return all events as HTML source code
             events_source_list.append(event.get_attribute("outerHTML"))
-
+    print("Raw event scraped successfully")
+    
     # process all HTML source code into Event objects
     for event in events_source_list:
-        output.append(format_events(event))
+        processed_event = format_events(event)
+        output.append(processed_event)
+        logging.info(f"Processed event: {processed_event}")
 
-    # #filter events of today date
-    # output = [event for event in output if is_today(event.date)]
+    print("Events processed successfully")
+    logging.info(f"Output is: {output}")
     return output  # export list of Event objects
 
 if __name__ == "__main__":
@@ -148,6 +155,5 @@ if __name__ == "__main__":
             "location": event['location']
         }]
         db.add_event(event)
-
     output = db.get_all_event()
-    print(output)
+    logging.info(f"output query is: {output}")
