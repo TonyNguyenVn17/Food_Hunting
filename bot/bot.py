@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 from cron_job import scrape_by_time
 import threading
 import asyncio
+from pagination import PaginationView
+from database.db import FoodDatabase
 
 #! LOAD OUR TOKEN FROM SOMEWHERE
 load_dotenv()
@@ -46,11 +48,8 @@ async def send_message(message: Message, user_message: str) -> None:
             return
         # if private is said to true, send the message privately
         # otherwise send to the current channel
-        
         await message.author.send(response) if is_private else await message.channel.send(response)
-        
-        paginator = commands.Paginator(prefix='', suffix='')
-        
+  
     except Exception  as e:
         print(e)
 
@@ -93,8 +92,6 @@ async def on_ready():
         if channel is not None:
             await channel.send("Hello What's Up Baby I am back")
 
-
-
 #! HANDLING INCOMING MESSAGES
 @client.event
 async def on_message(message: Message) -> None:
@@ -104,10 +101,17 @@ async def on_message(message: Message) -> None:
     username: str = str(message.author)
     user_message: str = message.content
     channel: str = str(message.channel)
-    
+
     print(f'{username} said {user_message} in {channel}')
     print(f'Processing message: {user_message}')  
-    await send_message(message, user_message) # send the message to the send_message function
+
+    if user_message == "!events":
+        db = FoodDatabase()
+        data = db.get_today_event()
+        pagination_view = PaginationView(count=5, data=data)
+        await pagination_view.send(message.channel)
+    else:       
+        await send_message(message, user_message)
         
 #! MAIN ENTRY POINT
 def run() -> None:
@@ -117,8 +121,8 @@ def run() -> None:
         client.run(token = TOKEN)
     except Exception as e:
         print('Got some Error:', str(e))
+
 if __name__ == '__main__':
     bot_thread = threading.Thread(target=run)
     bot_thread.start()
-    
     scrape_by_time()
