@@ -1,9 +1,4 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import time 
-import logging 
 from typing import List, Dict, Union, Set  
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait 
@@ -11,10 +6,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup 
 from scrape.login import driver 
 from database.event import Event
-
-log_file_path = os.path.join(os.path.dirname(__file__), 'scraping.log')
-logging.basicConfig(filename=log_file_path, level=logging.INFO, 
-                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 try:
     WAIT = WebDriverWait(driver, 20)
@@ -82,23 +73,30 @@ def check_login() -> None:
     user must manually login to the page
     """
     # go to login page
-    print("Opening login page") 
-    driver.get('https://www.campusgroups.com/shibboleth/login?idp=usf')
-    time.sleep(5)
-    # Keep login page open until user manually login  (login elements are no longer visible)
-    while check_exists_by_ID("loginHeader") == True or check_exists_by_ID("displayName") == True:
-        print('Error: Need hooman authentication')
-        time.sleep(10)
-    print("Login page access successful")
+    
+    try:
+        print("Opening login page") 
+        driver.get('https://www.campusgroups.com/shibboleth/login?idp=usf')
+        time.sleep(5)
+        # Keep login page open until user manually login  (login elements are no longer visible)
+        while check_exists_by_ID("loginHeader") == True or check_exists_by_ID("displayName") == True:
+            print('Error: Need hooman authentication')
+            time.sleep(10)
+        print("Login page access successful")
+    except Exception as e:
+        print(f"Error opening login page: {str(e)}")
 
 def open_food_page() -> None:
     """ 
     direct driver to food page (after login)
     """
-    driver.get('https://bullsconnect.usf.edu/events?topic_tags=7276307')
-    time.sleep(1)
-    driver.maximize_window()
-    time.sleep(5)
+    try:
+        print("Opening food page")
+        driver.get('https://www.campusgroups.com/usf/food')
+        time.sleep(5)
+        print("Food page access successful")
+    except Exception as e:
+        print(f"Error opening bullsconnect food page: {str(e)}")
 
 def find_events() -> List[Event]:
     """
@@ -106,7 +104,6 @@ def find_events() -> List[Event]:
     """
     output = []
     event_list = []
-
     # wait until all events on BullsConnect page are loaded, then collect all events as raw WebElement objects
     try:
         event_raw_list = WAIT.until(
@@ -129,10 +126,9 @@ def find_events() -> List[Event]:
     for event in events_source_list:
         processed_event = format_events(event)
         output.append(processed_event)
-        logging.info(f"Processed event: {processed_event}")
 
     print("Events processed successfully")
-    logging.info(f"Output is: {output}")
+
     return output  # export list of Event objects
 
 if __name__ == "__main__":
@@ -156,4 +152,3 @@ if __name__ == "__main__":
         }]
         db.add_event(event)
     output = db.get_all_event()
-    logging.info(f"output query is: {output}")
