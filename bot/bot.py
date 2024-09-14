@@ -10,7 +10,6 @@ import threading
 import asyncio
 from pagination import PaginationView
 from database.db import FoodDatabase
-
 #! LOAD OUR TOKEN FROM SOMEWHERE
 load_dotenv()
 TOKEN: Final[str] = os.getenv('DISCORD_TOKEN')
@@ -51,33 +50,7 @@ async def send_message(message: Message, user_message: str) -> None:
         await message.author.send(response) if is_private else await message.channel.send(response)
   
     except Exception  as e:
-        print(e)
-
-def seconds_until_friday_10pm():
-    now = datetime.now()
-    next_friday_10pm = (now + timedelta((4 - now.weekday() + 7) % 7)).replace(hour=22, minute=0, second=0, microsecond=0)
-    seconds = (next_friday_10pm - now).total_seconds()
-    return seconds if seconds >= 0 else seconds + 604800
-
-def seconds_until_saturday_11am():
-    now = datetime.now()
-    next_saturday_11am = (now + timedelta((5 - now.weekday() + 7) % 7)).replace(hour=11, minute=0, second=0, microsecond=0)
-    seconds = (next_saturday_11am - now).total_seconds()
-    return seconds if seconds >= 0 else seconds + 604800
-
-#TODO: Fix this bug on channel not found
-# @tasks.loop(seconds=seconds_until_friday_10pm())
-# async def friday_10pm_task():
-#     channel = client.get_channel(CHANNEL_ID)
-#     await channel.send("12PM - ISA - PROJECT TIME - ATTANDANCE MANDATORY")
-#     friday_10pm_task.change_interval(seconds=seconds_until_friday_10pm())  # Reschedule for next Friday
-
-#TODO: Fix this bug on channel not found
-# @tasks.loop(seconds=seconds_until_saturday_11am())
-# async def saturday_11am_task():
-#     channel = client.get_channel(CHANNEL_ID)
-#     await channel.send("REMINDER - 12PM - ISA - PROJECT TIME - ATTANDANCE MANDATORY")
-#     saturday_11am_task.change_interval(seconds=seconds_until_saturday_11am())  # Reschedule for next Saturday
+        print(e)  # Reschedule for next Saturday
   
     
 #! START BOT MESSAGE
