@@ -77,11 +77,12 @@ def kill_chrome_processes():
 
 #! Using Local Chrome
 def get_local_driver():
-    kill_chrome_processes()
+    # kill_chrome_processes()
     try:
         options = webdriver.ChromeOptions()
         for arg in ARGUMENTS:
             options.add_argument(arg)
+        options.add_argument(f'--user-data-dir={CHROME_PROFILE_PATH}')
         driver = webdriver.Chrome(options)
         print("Chrome driver created successfully")
         print(driver)

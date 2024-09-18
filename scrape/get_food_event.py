@@ -92,7 +92,7 @@ def open_food_page() -> None:
     """
     try:
         print("Opening food page")
-        driver.get('https://www.campusgroups.com/usf/food')
+        driver.get('https://bullsconnect.usf.edu/events?topic_tags=7276307')
         time.sleep(5)
         print("Food page access successful")
     except Exception as e:
@@ -114,7 +114,7 @@ def find_events() -> List[Event]:
         print("Events not loaded")
 
     # process WebElement objects into HTML source code
-    # filter out true events
+    # filter out true events    
     events_source_list = []
     for event in event_list:
         if "list-group-item" in event.get_attribute("class") and "display: none;" not in event.get_attribute("style"):
