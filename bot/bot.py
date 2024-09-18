@@ -10,12 +10,16 @@ import threading
 import asyncio
 from pagination import PaginationView
 from database.db import FoodDatabase
+from cron_job import scrape_data
+from collections import defaultdict
+from datetime import datetime
+
 #! LOAD OUR TOKEN FROM SOMEWHERE
 load_dotenv()
 TOKEN: Final[str] = os.getenv('DISCORD_TOKEN')
 SERVER_ID = os.getenv('SERVER_ID')
 CHANNEL_ID = os.getenv('CHANNEL_ID')
-
+RETRY = 5
 #! BOT SETUP
 """
     * Create a bot instance 
@@ -26,7 +30,24 @@ CHANNEL_ID = os.getenv('CHANNEL_ID')
 intents: Intents = Intents.default()
 intents.message_content = True # NOQA
 client: Client = Client(intents=intents) # intents from client
+user_cooldown = {}
+COOLDOWN_PERIOD = 30
 
+# ! SEE IF WHETHER USER IS SENDING MESSAGE TOO QUICKLY OR NOT
+async def debounce_message(message: Message):
+    user_id = message.author.id
+    current_time = datetime.now()
+    
+    if user_id in user_cooldown:
+        last_message_time = user_cooldown[user_id]
+        if (current_time - last_message_time).seconds < 30:
+            print(f"period {(current_time - last_message_time).seconds}")
+            return True
+    
+    user_cooldown[user_id] = current_time
+    return False
+    
+        
 #! MESSAGE FUNCTIONALITY
 async def send_message(message: Message, user_message: str) -> None:
     #* None because it's only meant to execute code
@@ -77,10 +98,20 @@ async def on_message(message: Message) -> None:
 
     print(f'{username} said {user_message} in {channel}')
     print(f'Processing message: {user_message}')  
-
+    
+    if message and message[0] == "!" and await debounce_message(message):
+        await message.channel.send(f"You're sending messages too quickly. Please wait {COOLDOWN_PERIOD} seconds.")
+        return 
+    
     if user_message == "!events":
         db = FoodDatabase()
         data = db.get_today_event()
+        count = 0
+        while not data and count < RETRY:
+            print(f"no data in database, scraping attemp {count}")
+            scrape_data()
+            data = db.get_today_event()
+            count += 1
         pagination_view = PaginationView(count=5, data=data)
         await pagination_view.send(message.channel)
     else:       
