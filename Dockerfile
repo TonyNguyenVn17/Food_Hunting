@@ -9,4 +9,4 @@ ADD . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run app.py when the container launches
-CMD ["python3", "bot.py"]
+CMD ["python3", "bot/bot.py"]
