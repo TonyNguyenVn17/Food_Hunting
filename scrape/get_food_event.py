@@ -6,12 +6,17 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup 
 from scrape.login import driver 
 from database.event import Event
+import json
+import os
 
 try:
     WAIT = WebDriverWait(driver, 20)
     print("WebDriverWait object created successfully")
 except Exception as e:
     print(f"Error creating WebDriverWait object: {str(e)}")
+    
+root_path = os.path.dirname(os.path.abspath(__file__))
+cookies_path = os.path.join(root_path, "cookies.json")
 
 def format_events(event_html: str) -> Dict[str, str]:
     """
@@ -73,16 +78,27 @@ def check_login() -> None:
     user must manually login to the page
     """
     # go to login page
-    
+    print("Opening login page") 
+    preloaded = True
     try:
-        print("Opening login page") 
         driver.get('https://www.campusgroups.com/shibboleth/login?idp=usf')
-        time.sleep(5)
+        cookies = []
+        if os.path.exists(cookies_path):
+            with open(cookies_path, "r") as file:
+                cookies = json.load(file)
+            for cookie in cookies:
+                driver.add_cookie(cookie)
+            
         # Keep login page open until user manually login  (login elements are no longer visible)
         while check_exists_by_ID("loginHeader") == True or check_exists_by_ID("displayName") == True:
-            print('Error: Need hooman authentication')
+            preloaded = False
+            print('Please manually login by typing in usf email / password and authenticate on Microsoft Authenticator')
             time.sleep(10)
         print("Login page access successful")
+        if not preloaded:
+            with open(cookies_path, "w") as file:
+                json.dump(cookies, file)
+        # get cookies after login to use for future access
     except Exception as e:
         print(f"Error opening login page: {str(e)}")
 
