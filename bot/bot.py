@@ -99,11 +99,12 @@ async def on_message(message: Message) -> None:
     print(f'{username} said {user_message} in {channel}')
     print(f'Processing message: {user_message}')  
     
-    if message and message[0] == "!" and await debounce_message(message):
+    if message.content and message.content[0] == "!" and await debounce_message(message):
         await message.channel.send(f"You're sending messages too quickly. Please wait {COOLDOWN_PERIOD} seconds.")
         return 
     
     if user_message == "!events":
+        await message.channel.send("Collecting data, please stand by...")
         db = FoodDatabase()
         data = db.get_today_event()
         count = 0
@@ -112,6 +113,9 @@ async def on_message(message: Message) -> None:
             scrape_data()
             data = db.get_today_event()
             count += 1
+        if not data:
+            await message.channel.send("No events found :( Maybe try again later?")
+            return
         pagination_view = PaginationView(count=5, data=data)
         await pagination_view.send(message.channel)
     else:       
